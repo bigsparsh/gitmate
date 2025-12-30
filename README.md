@@ -182,37 +182,37 @@ You'll be prompted to enter a GitHub repository URL. GitMate will:
 
 ### Screenshots Walkthrough
 
-#### 1️⃣ Repository Analysis
+#### 1️ Repository Analysis
 
 Enter any GitHub repository URL to begin analysis:
 
 ![Repository Cloning and Parsing](backend/assets/1%20final.png)
 
-#### 2️⃣ Code Entity Extraction
+#### 2️ Code Entity Extraction
 
 GitMate extracts all code entities with detailed information:
 
 ![Entity Extraction](backend/assets/2%20final.png)
 
-#### 3️⃣ LSP Enhancement
+#### 3️ LSP Enhancement
 
 Reference tracking and call hierarchy analysis:
 
 ![LSP Enhancement](backend/assets/3%20final.png)
 
-#### 4️⃣ AI-Powered Analysis
+#### 4️ AI-Powered Analysis
 
 Each entity receives an intelligent description:
 
 ![AI Analysis](backend/assets/4%20final%20.png)
 
-#### 5️⃣ Vector Store Creation
+#### 5️ Vector Store Creation
 
 Building the semantic search index:
 
 ![Vector Store](backend/assets/5%20final.png)
 
-#### 6️⃣ Interactive Chat
+#### 6️ Interactive Chat
 
 Ask questions and get contextual answers:
 
@@ -242,7 +242,7 @@ You: /calls main
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 ![GitMate Architecture](backend/assets/WhatsApp%20Image%202025-12-30%20at%209.29.27%20PM.jpeg)
 
