@@ -11,7 +11,7 @@
 
 _Onboarding to a new codebase shouldn't feel like deciphering ancient hieroglyphics._
 
-[Getting Started](#installation) • [Features](#features) • [Usage](#usage) • [Contributing](#contribution)
+[Getting Started](#installation) **.** [Features](#features) **.** [Usage](#usage) **.** [Contributing](#contribution)
 
 </div>
 
