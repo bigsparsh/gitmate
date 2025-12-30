@@ -38,13 +38,19 @@ Ever cloned a repository and felt lost trying to understand the codebase ? It fe
 
 ### ✨ The GitMate Solution
 
-GitMate combines the power of **AST parsing**, **Language Server Protocol (LSP)**, and **Large Language Models** to:
+GitMate transforms the codebase exploration into a guided journey. Here's How:
 
-1. **Parse** every function, class, struct, and variable in your codebase
-2. **Analyze** code flow using LSP for accurate reference tracking and call hierarchies
-3. **Describe** what each piece of code does using AI
-4. **Index** everything in a semantic vector database
-5. **Answer** your questions with contextually relevant, streaming responses
+1. **Deep Code Understanding**
+-> Tree-sitter parses your entire codebase into structured AST, extracting every function, class, variable and their relationship.
+
+2. **AI-Powered Documentation**
+-> Each code entity gets and AI-generated description explaining what it does, how it works, and why it matters.
+
+3. **Semantic Memory**
+-> Everything is embedded into a FAISS vector database, enabling natural language search.
+
+4. **Conversational Code Navigation**
+-> Chat with your codebase and have the ability to dive deeper with `/refs` and `/calls` command.
 
 ---
 
@@ -111,7 +117,7 @@ GitMate combines the power of **AST parsing**, **Language Server Protocol (LSP)*
 
 ---
 
-## Installation
+## INSTALLATION
 
 ### Prerequisites
 
@@ -169,7 +175,7 @@ brew install llvm          #macOS
 ```
 ---
 
-## Usage
+## USAGE
 
 ### Starting GitMate
 
