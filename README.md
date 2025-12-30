@@ -180,29 +180,29 @@ python main.py
 
 You'll be prompted to enter Github Repo URL. After that GitMate will:
 
-1. Clone the repository to `/tmp/gitmate/`
+**1. Clone the repository to `/tmp/gitmate/`**
 
 Enter any GitHub repository URL to begin analysis. For example : ( https://github.com/bigsparsh/bgdb.git )
 
-2. Using Tree-sitter GitMate will parse through all the source files and it will also initialize the LSP Server (if available)
+**2. Using Tree-sitter GitMate will parse through all the source files and it will also initialize the LSP Server (if available)**
 
 ![Extracting and initializing](backend/assets/2%20final.png)
 
-3. AI will start analyzing and generating each entity signatures of function, variables and macros
+**3. AI will start analyzing and generating each entity signatures of function, variables and macros**
 
 ![Analyzing](backend/assets/3%20final.png)
 
-4. Result of the AI analysis
+**4. Result of the AI analysis**
 
 ![AI Analysis](backend/assets/4%20final%20.png)
 
-5. Creating of the Vector Store
+**5. Creating of the Vector Store**
 
 ![Vector Store](backend/assets/5%20final.png)
 
-6. Enter the Interactive Chat
+**6. Enter the Interactive Chat**
 
-[Interactive chat session](backend/assets/6%20final.png)
+![Interactive chat session](backend/assets/6%20final.png)
 
 ### Chat Commands
 
