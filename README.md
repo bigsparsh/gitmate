@@ -253,7 +253,6 @@ gitmate/
 
 - Modern React-based frontend
 - Dark/Light theme support
-- Mobile-responsive design
 - Real-time streaming chat UI
 
 </td>
@@ -299,7 +298,7 @@ gitmate/
 
 We welcome contributions from the community! Here's how you can help:
 
-### Getting Started
+### Getting Started To Contribute
 
 1. **Fork** the repository
 2. **Create** a feature branch (`git checkout -b feature/feature-name`)
@@ -307,34 +306,22 @@ We welcome contributions from the community! Here's how you can help:
 4. **Push** to the branch (`git push origin feature/feature-name`)
 5. **Open** a Pull Request
 
-### Guidelines
+### Guidelines To Follow
 
 - Follow **PEP 8** for Python code style
 - Write **docstrings** for all functions and classes
 - Add **tests** for new functionality
 - Update **documentation** as needed
-- Keep commits **atomic** and messages **descriptive**
+- Keep commits **atomic** and write **descriptive** messages
 
-### Areas We Need Help
+### Areas We Need Help In
 
-- Bug fixes and issue resolution
-- Documentation improvements
+- Bug fixes and resolve issues
+- Improvements in Documentation
 - Language support additions
-- Test coverage expansion
-- Feature suggestions
+- Feature Suggestions
 
-## Credits & Acknowledgments
-
-### Built With
-
-- **[Tree-sitter](https://tree-sitter.github.io/)** - Incremental parsing library
-- **[LangChain](https://langchain.com/)** - LLM application framework
-- **[Groq](https://groq.com/)** - Ultra-fast LLM inference
-- **[Ollama](https://ollama.ai/)** - Local model running
-- **[Rich](https://rich.readthedocs.io/)** - Beautiful terminal formatting
-- **[FAISS](https://faiss.ai/)** - Efficient similarity search
-
-### Inspiration
+## INSPIRATION
 
 - Every developer who struggled with a new codebase
 - The open-source community's commitment to accessibility
@@ -342,19 +329,13 @@ We welcome contributions from the community! Here's how you can help:
 
 ---
 
-## Contact
+## CONTACT
 
 <div align="center">
 
 **Sparsh Singh** - Creator & Maintainer
 
 [![GitHub](https://img.shields.io/badge/GitHub-bigsparsh-181717?style=for-the-badge&logo=github)](https://github.com/bigsparsh)
-
----
-
-**Found a bug? Have a feature request?**
-
-[Open an Issue](https://github.com/bigsparsh/gitmate/issues/new) • [Start a Discussion](https://github.com/bigsparsh/gitmate/discussions)
 
 ---
 
