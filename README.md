@@ -300,6 +300,11 @@ gitmate/
 
 ---
 
+## SNEAK PEEK INTO THE FUTURE
+
+![Sneak Peek](backend/assets/7.png)
+
+
 ## CONTRIBUTION
 
 We welcome contributions from the community! Here's how you can help:
