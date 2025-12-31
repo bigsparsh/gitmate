@@ -226,7 +226,7 @@ Enter any GitHub repository URL to begin analysis. For example : ( https://githu
 
 ## ARCHITECTURE
 
-![Architecture](backend/assets/WhatsApp%20Image%202025-12-30%20at%209.29.27%20PM.jpeg)
+![Architecture](backend/assets/2025-12-31-231815_hyprshot.png)
 
 ---
 
