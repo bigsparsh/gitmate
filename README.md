@@ -317,6 +317,6 @@ gitmate/
 
 ---
 
-<sub>Made with ❤️ for developers, by developers</sub>
+<sub>Made with ❤️ for Developers, by Developers</sub>
 
 </div>
