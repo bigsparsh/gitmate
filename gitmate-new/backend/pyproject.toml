@@ -1,0 +1,33 @@
+[project]
+name = "gitmate"
+version = "0.1.0"
+description = "GitMate: An onboarding application for newbies to github codebase"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "gitpython>=3.1.45",
+    "tree-sitter>=0.25.2",
+    "tree-sitter-c>=0.24.1",
+    "tree-sitter-cpp>=0.23.0",
+    "tree-sitter-typescript>=0.23.0",
+    "tree-sitter-json>=0.24.0",
+    "faiss-cpu>=1.13.2",
+    "rich>=14.2.0",
+    "langchain>=0.3.0",
+    "langchain-community>=0.3.0",
+    "langchain-groq>=0.2.0",
+    "langchain-google-genai>=2.0.0",
+    "langchain-text-splitters>=0.3.0",
+    "python-dotenv>=1.0.0",
+    "langchain-ollama>=1.0.1",
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.32.0",
+    "pydantic>=2.0.0",
+]
+
+[project.scripts]
+gitmate = "main:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["gitmate*"]
