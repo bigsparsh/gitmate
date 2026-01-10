@@ -179,10 +179,10 @@ brew install llvm          #macOS
 
 ### Starting GitMate
 
-```zsh
 python main.py
-```
-![GitMate Running](backend/assets/1%20final.png)
+
+<img width="1600" height="333" alt="1 final" src="https://github.com/user-attachments/assets/7654a754-05b7-418c-ae73-f92562d6417e" />
+
 
 You'll be prompted to enter Github Repo URL. After that GitMate will:
 
@@ -192,23 +192,28 @@ Enter any GitHub repository URL to begin analysis. For example : ( https://githu
 
 **2. Using Tree-sitter GitMate will parse through all the source files and it will also initialize the LSP Server (if available)**
 
-![Extracting and initializing](backend/assets/2%20final.png)
+<img width="799" height="733" alt="2 final" src="https://github.com/user-attachments/assets/02b49ea2-68f1-4e81-8f29-eff676561966" />
+
 
 **3. AI will start analyzing and generating each entity signatures of function, variables and macros**
 
-![Analyzing](backend/assets/3%20final.png)
+<img width="607" height="738" alt="3 final" src="https://github.com/user-attachments/assets/c00dc7ef-f74f-48bd-9d10-9c6f276a11d3" />
+
 
 **4. Result of the AI analysis**
 
-![AI Analysis](backend/assets/4%20final%20.png)
+<img width="1048" height="596" alt="4 final " src="https://github.com/user-attachments/assets/09d8d074-67d0-4735-be18-a84c28fd27cc" />
+
 
 **5. Creating of the Vector Store**
 
-![Vector Store](backend/assets/5%20final.png)
+<img width="1574" height="699" alt="5 final" src="https://github.com/user-attachments/assets/f7a9be13-352d-48f2-b936-873f701285cb" />
+
 
 **6. Enter the Interactive Chat**
 
-![Interactive chat session](backend/assets/6%20final.png)
+<img width="1154" height="652" alt="6 final" src="https://github.com/user-attachments/assets/21b5d35e-66aa-4659-9bda-f639dcc3f2c6" />
+
 
 ### Chat Commands
 
@@ -226,7 +231,8 @@ Enter any GitHub repository URL to begin analysis. For example : ( https://githu
 
 ## ARCHITECTURE
 
-![Architecture](backend/assets/2025-12-31-232336_hyprshot.png)
+![Architecture](https://github.com/user-attachments/assets/ff8adac3-6e70-4fd1-a5cf-cebb578b4e6d)
+
 
 ---
 
@@ -302,7 +308,8 @@ gitmate/
 
 ## SNEAK PEEK INTO THE FUTURE
 
-![Sneak Peek](backend/assets/7.png)
+<img width="866" height="478" alt="7" src="https://github.com/user-attachments/assets/2657ff0f-d23e-470f-9956-d991d7fcd176" />
+
 
 
 ## CONTRIBUTION
