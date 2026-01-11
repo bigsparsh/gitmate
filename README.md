@@ -123,25 +123,35 @@ GitMate bridges the gap between raw code and human understanding:
 Experience the power of GitMate through our modern web interface.
 
 <div align="center">
-  <img src="https://via.placeholder.com/800x450?text=Dashboard+Overview" alt="Dashboard Overview" width="800"/>
+   <img width="1199" height="675" alt="1" src="https://github.com/user-attachments/assets/b87dbc6d-0a90-4fbd-b723-1afa53f7dd57" />
+
   <p><em>Comprehensive Dashboard Overview</em></p>
 </div>
 
 <table>
   <tr>
-    <td width="33%"><img src="https://via.placeholder.com/400x225?text=Project+View" alt="Project View"/></td>
-    <td width="33%"><img src="https://via.placeholder.com/400x225?text=Chat+Interface" alt="Chat Interface"/></td>
-    <td width="33%"><img src="https://via.placeholder.com/400x225?text=File+Explorer" alt="File Explorer"/></td>
+    <td width="33%"><img width="1296" height="710" alt="2" src="https://github.com/user-attachments/assets/68ff0bfd-9ed5-4377-a998-19e4b4b5e51e" />
+</td>
+    <td width="33%"><img width="1061" height="578" alt="3" src="https://github.com/user-attachments/assets/f093f0d0-a829-4937-874b-8831e90f4483" />
+</td>
+    <td width="33%"><img width="1035" height="596" alt="4" src="https://github.com/user-attachments/assets/0345df2c-b5ff-4b79-9ff0-e912685d4d13" />
+</td>
   </tr>
   <tr>
-    <td width="33%"><img src="https://via.placeholder.com/400x225?text=Call+Hierarchy" alt="Call Hierarchy"/></td>
-    <td width="33%"><img src="https://via.placeholder.com/400x225?text=Code+Analysis" alt="Code Analysis"/></td>
-    <td width="33%"><img src="https://via.placeholder.com/400x225?text=Dependency+Graph" alt="Dependency Graph"/></td>
+    <td width="33%"><img width="1128" height="623" alt="5" src="https://github.com/user-attachments/assets/6dc04919-5591-45b9-9937-67cbcc2f86f8" />
+</td>
+    <td width="33%"><img width="1025" height="679" alt="6" src="https://github.com/user-attachments/assets/955b2311-06fe-486d-a5c1-abcf39a0224d" />
+</td>
+    <td width="33%"><img width="1106" height="624" alt="7" src="https://github.com/user-attachments/assets/208790b4-6913-4f0b-a667-327590b1ac59" />
+</td>
   </tr>
   <tr>
-    <td width="33%"><img src="https://via.placeholder.com/400x225?text=Settings+Panel" alt="Settings Panel"/></td>
-    <td width="33%"><img src="https://via.placeholder.com/400x225?text=Dark+Mode" alt="Dark Mode Support"/></td>
-    <td width="33%"><img src="https://via.placeholder.com/400x225?text=Mobile+Responsive" alt="Mobile Responsive"/></td>
+    <td width="33%"><img width="923" height="550" alt="8" src="https://github.com/user-attachments/assets/b6cfb768-b401-4b1b-9a00-675da0782a09" />
+</td>
+    <td width="33%"><img width="1115" height="629" alt="9 (1)" src="https://github.com/user-attachments/assets/24f3e3e3-94ee-42cc-ada6-0edf16592373" />
+</td>
+    <td width="33%"><img width="1199" height="675" alt="1" src="https://github.com/user-attachments/assets/f3bbc908-9a18-45a1-8b78-2a81b8f66c46" />
+</td>
   </tr>
 </table>
 
