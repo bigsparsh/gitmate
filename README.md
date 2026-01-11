@@ -14,6 +14,7 @@ _Onboarding to a new codebase shouldn't feel like deciphering ancient hieroglyph
 [Getting Started](#installation) . [Features](#features) . [Usage](#usage) . [Contributing](#contribution)
 
 </div>
+<img width="1115" height="629" alt="9 (1)" src="https://github.com/user-attachments/assets/d8496cf8-9622-4aaf-8b1f-ff2dca98e64f" />
 
 ---
 
