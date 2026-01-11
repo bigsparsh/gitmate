@@ -243,7 +243,8 @@ pnpm dev
 4. Interact with the **Chat**, **File Explorer**, or **Dependency Graph** to understand the code.
 
 <div align="center">
-  <img src="https://via.placeholder.com/800x200?text=Running+Analysis+Demo" alt="Analysis Demo"/>
+  <img width="1025" height="679" alt="6" src="https://github.com/user-attachments/assets/0beff3af-dda2-45c4-b063-02eddf9f543f" />
+
 </div>
 
 
