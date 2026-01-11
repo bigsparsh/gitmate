@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect, use } from "react";
 import { useSession } from "next-auth/react";
-import { Send, Bot, User, Loader2, BarChart3, AlertCircle } from "lucide-react";
+import { Send, Bot, User, Loader2, BarChart3, AlertCircle, FileCode, ArrowDownLeft, ArrowUpRight, Search, MapPin } from "lucide-react";
 import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -13,8 +13,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import type { ChatMessage } from "@/types";
-import { sendChatMessage, getProject, getChatHistory } from "@/lib/api";
+import { Badge } from "@/components/ui/badge";
+import type { ChatMessage, CommandResponseData, RefResult, CallHierarchyResult, SearchResultItem } from "@/types";
+import { sendChatMessage, getProject, getChatHistory, type CommandResponse } from "@/lib/api";
 
 export default function ChatPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
@@ -33,8 +34,9 @@ Try asking me things like:
 - "What functions are in this file?"
 
 You can also use special commands:
-- \`/refs functionName\` - Find all references to a function
-- \`/calls functionName\` - Show the call hierarchy`,
+- \`/refs functionName\` - Find all references to a function or entity
+- \`/calls functionName\` - Show the call hierarchy for a function
+- \`/search query\` - Search for relevant code entities`,
       timestamp: new Date(),
     },
   ]);
@@ -115,14 +117,26 @@ You can also use special commands:
       }
     );
 
-    if (result.success && result.data) {
-      const assistantMessage: ChatMessage = {
-        id: (Date.now() + 1).toString(),
-        role: "assistant",
-        content: result.data.content,
-        timestamp: new Date(),
-      };
-      setMessages((prev) => [...prev, assistantMessage]);
+    if (result.success) {
+      // Check if this is a command response
+      if (result.commandResponse) {
+        const assistantMessage: ChatMessage = {
+          id: (Date.now() + 1).toString(),
+          role: "assistant",
+          content: "", // Command responses use special rendering
+          timestamp: new Date(),
+          commandResponse: result.commandResponse as CommandResponseData,
+        };
+        setMessages((prev) => [...prev, assistantMessage]);
+      } else if (result.data) {
+        const assistantMessage: ChatMessage = {
+          id: (Date.now() + 1).toString(),
+          role: "assistant",
+          content: result.data.content,
+          timestamp: new Date(),
+        };
+        setMessages((prev) => [...prev, assistantMessage]);
+      }
     } else {
       // Show error message
       const errorMessage: ChatMessage = {
@@ -239,6 +253,22 @@ function MessageBubble({
 }) {
   const isUser = message.role === "user";
 
+  // Check if this is a command response
+  if (message.commandResponse) {
+    return (
+      <div className="flex gap-3">
+        <Avatar className="h-8 w-8 flex-shrink-0">
+          <AvatarFallback className="bg-muted">
+            <Bot className="h-4 w-4" />
+          </AvatarFallback>
+        </Avatar>
+        <div className="flex-1 max-w-[90%]">
+          <CommandResponseCard response={message.commandResponse} />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={`flex gap-3 ${isUser ? "flex-row-reverse" : ""}`}>
       <Avatar className="h-8 w-8 flex-shrink-0">
@@ -288,6 +318,258 @@ function MessageBubble({
           <span className="inline-block w-2 h-4 bg-current animate-pulse ml-1" />
         )}
       </div>
+    </div>
+  );
+}
+
+function CommandResponseCard({ response }: { response: CommandResponseData }) {
+  if (response.type === "refs") {
+    return <RefsCard entityName={response.entity_name} error={response.error} results={response.results} />;
+  }
+  if (response.type === "calls") {
+    return <CallsCard functionName={response.function_name} error={response.error} results={response.results} />;
+  }
+  if (response.type === "search") {
+    return <SearchCard query={response.query} results={response.results} />;
+  }
+  return null;
+}
+
+function RefsCard({ entityName, error, results }: { entityName: string; error?: string; results: RefResult[] }) {
+  if (error) {
+    return (
+      <Card className="border-yellow-500/50">
+        <CardHeader className="py-3">
+          <CardTitle className="text-sm flex items-center gap-2 text-yellow-600">
+            <AlertCircle className="h-4 w-4" />
+            No References Found
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="py-2">
+          <p className="text-sm text-muted-foreground">{error}</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center gap-2 text-sm font-medium">
+        <MapPin className="h-4 w-4 text-blue-500" />
+        References for &quot;{entityName}&quot;
+      </div>
+      {results.map((result, idx) => (
+        <Card key={idx} className="border-blue-500/30">
+          <CardHeader className="py-3">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm flex items-center gap-2">
+                <FileCode className="h-4 w-4 text-blue-500" />
+                <span className="font-mono">{result.name}</span>
+              </CardTitle>
+              <Badge variant="secondary" className="text-xs">{result.entity_type}</Badge>
+            </div>
+          </CardHeader>
+          <CardContent className="py-2 space-y-2">
+            <p className="text-xs text-muted-foreground">
+              {result.file_path}:{result.line}
+            </p>
+            
+            {/* For functions: show callers and callees */}
+            {result.callers && result.callers.length > 0 && (
+              <div>
+                <p className="text-xs font-medium text-green-600 mb-1">
+                  <ArrowDownLeft className="h-3 w-3 inline mr-1" />
+                  Called by ({result.callers.length}):
+                </p>
+                <div className="space-y-1 pl-4">
+                  {result.callers.slice(0, 5).map((caller, i) => (
+                    <p key={i} className="text-xs text-muted-foreground font-mono">
+                      ← {caller.name} ({caller.file_path}:{caller.line})
+                    </p>
+                  ))}
+                  {result.callers.length > 5 && (
+                    <p className="text-xs text-muted-foreground">... and {result.callers.length - 5} more</p>
+                  )}
+                </div>
+              </div>
+            )}
+            
+            {result.callees && result.callees.length > 0 && (
+              <div>
+                <p className="text-xs font-medium text-yellow-600 mb-1">
+                  <ArrowUpRight className="h-3 w-3 inline mr-1" />
+                  Calls ({result.callees.length}):
+                </p>
+                <div className="space-y-1 pl-4">
+                  {result.callees.slice(0, 5).map((callee, i) => (
+                    <p key={i} className="text-xs text-muted-foreground font-mono">
+                      → {callee.name} ({callee.file_path}:{callee.line})
+                    </p>
+                  ))}
+                  {result.callees.length > 5 && (
+                    <p className="text-xs text-muted-foreground">... and {result.callees.length - 5} more</p>
+                  )}
+                </div>
+              </div>
+            )}
+            
+            {/* For non-functions: show references */}
+            {result.references && result.references.length > 0 && (
+              <div>
+                <p className="text-xs font-medium text-blue-600 mb-1">
+                  References ({result.references.length}):
+                </p>
+                <div className="space-y-1 pl-4">
+                  {result.references.slice(0, 10).map((ref, i) => (
+                    <p key={i} className="text-xs text-muted-foreground font-mono">
+                      • {ref.file_path}:{ref.line}
+                    </p>
+                  ))}
+                  {result.references.length > 10 && (
+                    <p className="text-xs text-muted-foreground">... and {result.references.length - 10} more</p>
+                  )}
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  );
+}
+
+function CallsCard({ functionName, error, results }: { functionName: string; error?: string; results: CallHierarchyResult[] }) {
+  if (error) {
+    return (
+      <Card className="border-yellow-500/50">
+        <CardHeader className="py-3">
+          <CardTitle className="text-sm flex items-center gap-2 text-yellow-600">
+            <AlertCircle className="h-4 w-4" />
+            No Call Hierarchy Found
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="py-2">
+          <p className="text-sm text-muted-foreground">{error}</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center gap-2 text-sm font-medium">
+        <BarChart3 className="h-4 w-4 text-purple-500" />
+        Call Hierarchy for &quot;{functionName}&quot;
+      </div>
+      {results.map((result, idx) => (
+        <Card key={idx} className="border-purple-500/30">
+          <CardHeader className="py-3">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm flex items-center gap-2">
+                <FileCode className="h-4 w-4 text-purple-500" />
+                <span className="font-mono">{result.name}</span>
+              </CardTitle>
+              <Badge variant="secondary" className="text-xs">{result.entity_type}</Badge>
+            </div>
+          </CardHeader>
+          <CardContent className="py-2 space-y-3">
+            <p className="text-xs text-muted-foreground">
+              {result.file_path}:{result.line}
+            </p>
+            
+            {/* Incoming calls (who calls this function) */}
+            <div>
+              <p className="text-xs font-medium text-green-600 mb-1">
+                <ArrowDownLeft className="h-3 w-3 inline mr-1" />
+                Called by ({result.incoming_calls.length}):
+              </p>
+              {result.incoming_calls.length > 0 ? (
+                <div className="space-y-1 pl-4">
+                  {result.incoming_calls.map((caller, i) => (
+                    <p key={i} className="text-xs text-muted-foreground font-mono">
+                      ← <span className="text-cyan-500">{caller.name}</span> ({caller.file_path}:{caller.line})
+                    </p>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-xs text-muted-foreground pl-4">No callers found</p>
+              )}
+            </div>
+            
+            {/* Outgoing calls (what this function calls) */}
+            <div>
+              <p className="text-xs font-medium text-yellow-600 mb-1">
+                <ArrowUpRight className="h-3 w-3 inline mr-1" />
+                Calls ({result.outgoing_calls.length}):
+              </p>
+              {result.outgoing_calls.length > 0 ? (
+                <div className="space-y-1 pl-4">
+                  {result.outgoing_calls.map((callee, i) => (
+                    <p key={i} className="text-xs text-muted-foreground font-mono">
+                      → <span className="text-cyan-500">{callee.name}</span> ({callee.file_path}:{callee.line})
+                    </p>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-xs text-muted-foreground pl-4">No outgoing calls found</p>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  );
+}
+
+function SearchCard({ query, results }: { query: string; results: SearchResultItem[] }) {
+  if (results.length === 0) {
+    return (
+      <Card className="border-yellow-500/50">
+        <CardHeader className="py-3">
+          <CardTitle className="text-sm flex items-center gap-2 text-yellow-600">
+            <Search className="h-4 w-4" />
+            No Results Found
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="py-2">
+          <p className="text-sm text-muted-foreground">No code entities matching &quot;{query}&quot;</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center gap-2 text-sm font-medium">
+        <Search className="h-4 w-4 text-green-500" />
+        Search Results for &quot;{query}&quot;
+      </div>
+      {results.map((result, idx) => (
+        <Card key={idx} className="border-green-500/30">
+          <CardHeader className="py-3">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm flex items-center gap-2">
+                <FileCode className="h-4 w-4 text-green-500" />
+                <span className="font-mono">{result.name}</span>
+              </CardTitle>
+              <div className="flex items-center gap-2">
+                <Badge variant="secondary" className="text-xs">{result.entity_type}</Badge>
+                <Badge variant="outline" className="text-xs">{(result.relevance_score * 100).toFixed(0)}%</Badge>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="py-2">
+            <p className="text-xs text-muted-foreground">
+              {result.file_path} (lines {result.start_line}-{result.end_line})
+            </p>
+            <div className="flex gap-4 mt-2 text-xs text-muted-foreground">
+              {result.num_references > 0 && <span>References: {result.num_references}</span>}
+              {result.num_callers > 0 && <span>Callers: {result.num_callers}</span>}
+              {result.num_callees > 0 && <span>Calls: {result.num_callees}</span>}
+            </div>
+          </CardContent>
+        </Card>
+      ))}
     </div>
   );
 }

@@ -107,53 +107,20 @@ function buildPathToNode(fileTree: FileNode[], targetPath: string): D3TreeNode |
     const node = pathNodes[i];
     const isTarget = i === pathNodes.length - 1;
     
-    const d3Node: D3TreeNode = {
-      name: node.name,
-      type: node.is_dir ? "directory" : "file",
-      path: node.path,
-      originalNode: node,
-      children: isTarget ? [] : (current ? [current] : [])
-    };
-    
-    // If this is the target, add all its contents
     if (isTarget) {
-      // Add child directories/files
-      if (node.children) {
-        d3Node.children = node.children.map(child => ({
-          name: child.name,
-          type: child.is_dir ? "directory" : "file",
-          path: child.path,
-          originalNode: child,
-          children: child.is_dir ? [] : undefined
-        }));
-      }
-      
-      // Add functions
-      if (node.functions && node.functions.length > 0) {
-        const functionNodes: D3TreeNode[] = node.functions.map(fn => ({
-          name: fn.name + "()",
-          type: "function" as const,
-          description: fn.description,
-          path: node.path,
-          originalFunction: fn
-        }));
-        d3Node.children = [...(d3Node.children || []), ...functionNodes];
-      }
-      
-      // Add variables
-      if (node.variables && node.variables.length > 0) {
-        const variableNodes: D3TreeNode[] = node.variables.map(v => ({
-          name: v.name,
-          type: "variable" as const,
-          description: v.description,
-          path: node.path,
-          originalVariable: v
-        }));
-        d3Node.children = [...(d3Node.children || []), ...variableNodes];
-      }
+      // For the target node, fully expand the entire subtree using convertNodeToD3Tree
+      current = convertNodeToD3Tree(node);
+    } else {
+      // For parent nodes, just create a path node with current as child
+      const d3Node: D3TreeNode = {
+        name: node.name,
+        type: node.is_dir ? "directory" : "file",
+        path: node.path,
+        originalNode: node,
+        children: current ? [current] : []
+      };
+      current = d3Node;
     }
-    
-    current = d3Node;
   }
   
   // Wrap in a root node
@@ -292,7 +259,7 @@ export default function ChartPage({ params }: { params: Promise<{ id: string }> 
     
     // Create tree layout - horizontal (root left, children right)
     const treeLayout = d3.tree<D3TreeNode>()
-      .nodeSize([50, 180]); // [vertical spacing, horizontal spacing]
+      .nodeSize([60, 280]); // [vertical spacing between siblings, horizontal spacing between levels]
     
     // Create hierarchy
     const root = d3.hierarchy(treeData);
@@ -324,10 +291,12 @@ export default function ChartPage({ params }: { params: Promise<{ id: string }> 
         .attr("d", d => {
           const sourcePos = nodePositions.get(d.source) || { x: d.source.y, y: d.source.x };
           const targetPos = nodePositions.get(d.target) || { x: d.target.y, y: d.target.x };
-          return `M${sourcePos.x + 70},${sourcePos.y}
-                  C${(sourcePos.x + targetPos.x) / 2 + 70},${sourcePos.y}
-                   ${(sourcePos.x + targetPos.x) / 2 + 70},${targetPos.y}
-                   ${targetPos.x - 70},${targetPos.y}`;
+          // Smooth bezier curve with control points at 40% and 60% of the horizontal distance
+          const midX = (sourcePos.x + targetPos.x) / 2;
+          return `M${sourcePos.x + 75},${sourcePos.y}
+                  C${midX + 40},${sourcePos.y}
+                   ${midX + 40},${targetPos.y}
+                   ${targetPos.x - 75},${targetPos.y}`;
         });
     };
     

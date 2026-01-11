@@ -10,7 +10,7 @@ import hashlib
 from typing import Generator, Any, Callable
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.messages import HumanMessage, AIMessage, BaseMessage
-from langchain_ollama import OllamaEmbeddings
+from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_groq import ChatGroq
 from pathlib import Path
 
@@ -118,20 +118,28 @@ def _save_description_cache(repo_path: str, cache: dict[str, str]) -> None:
         pass  # Silently fail on cache write errors
 
 
-def create_embeddings(model: str | None = None) -> OllamaEmbeddings:
+def create_embeddings(model: str | None = None) -> GoogleGenerativeAIEmbeddings:
     """
-    Create embeddings instance.
+    Create embeddings instance using Google Gemini.
 
     Args:
         model: Embedding model name (defaults to config)
 
     Returns:
-        OllamaEmbeddings instance
+        GoogleGenerativeAIEmbeddings instance
     """
     config = get_config()
     if model is None:
         model = config.embedding_model
-    return OllamaEmbeddings(model=model)
+    
+    api_key = config.gemini_api_key
+    if not api_key:
+        raise ValueError("GEMINI_API_KEY environment variable is required for embeddings")
+    
+    return GoogleGenerativeAIEmbeddings(
+        model=model,
+        google_api_key=api_key
+    )
 
 
 def create_llm(

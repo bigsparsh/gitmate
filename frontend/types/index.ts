@@ -57,9 +57,56 @@ export interface ReferenceInfo {
 
 export interface CallInfo {
   name: string;
+  kind?: string;
   filePath: string;
   line: number;
 }
+
+// Backend call info (snake_case from API)
+export interface BackendCallInfo {
+  name: string;
+  kind?: string;
+  file_path: string;
+  line: number;
+}
+
+// Command Response Types for /refs and /calls
+export interface RefResult {
+  name: string;
+  entity_type: string;
+  file_path: string;
+  line: number;
+  column: number;
+  callers?: BackendCallInfo[];
+  callees?: BackendCallInfo[];
+  references?: { file_path: string; line: number }[];
+}
+
+export interface CallHierarchyResult {
+  name: string;
+  entity_type: string;
+  file_path: string;
+  line: number;
+  incoming_calls: BackendCallInfo[];
+  outgoing_calls: BackendCallInfo[];
+}
+
+export interface SearchResultItem {
+  name: string;
+  entity_type: string;
+  file_path: string;
+  start_line: number;
+  end_line: number;
+  relevance_score: number;
+  num_references: number;
+  num_callers: number;
+  num_callees: number;
+}
+
+export type CommandResponseData = 
+  | { type: "refs"; entity_name: string; error?: string; results: RefResult[] }
+  | { type: "calls"; function_name: string; error?: string; results: CallHierarchyResult[] }
+  | { type: "search"; query: string; results: SearchResultItem[] };
 
 // Chat Types
 export interface ChatMessage {
@@ -67,6 +114,7 @@ export interface ChatMessage {
   role: "user" | "assistant";
   content: string;
   timestamp: Date;
+  commandResponse?: CommandResponseData;
 }
 
 // API Response Types

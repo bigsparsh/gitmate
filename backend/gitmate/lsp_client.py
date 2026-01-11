@@ -230,8 +230,8 @@ class ClangdClient(LSPClient):
                 "text": content
             }
         })
-        # Give server time to index
-        time.sleep(0.5)
+        # Small delay per file, batch wait happens after all files opened
+        time.sleep(0.1)
     
     def find_references(self, file_path: str, line: int, column: int) -> list[LSPReference]:
         """Find all references to a symbol at the given position"""
@@ -436,7 +436,8 @@ class TypeScriptLSPClient(LSPClient):
                 "text": content
             }
         })
-        time.sleep(0.5)
+        # Small delay per file, batch wait happens after all files opened
+        time.sleep(0.1)
     
     def find_references(self, file_path: str, line: int, column: int) -> list[LSPReference]:
         """Find all references to a symbol at the given position"""

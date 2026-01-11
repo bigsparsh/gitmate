@@ -7,10 +7,11 @@ Multi-tenant support with user-specific project isolation
 import asyncio
 import shutil
 import json
+import numpy as np
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Any
 from contextlib import asynccontextmanager
-from datetime import datetime
+from datetime import datetime, timezone
 import uuid
 
 from fastapi import FastAPI, HTTPException, Query, Header
@@ -50,6 +51,31 @@ from gitmate.chat import (
     get_entity_references,
     get_call_hierarchy,
 )
+
+
+# ============== JSON Serialization Helper ==============
+
+def make_json_serializable(obj: Any) -> Any:
+    """
+    Recursively convert numpy types and other non-serializable types to JSON-compatible types.
+    """
+    if isinstance(obj, dict):
+        return {k: make_json_serializable(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [make_json_serializable(item) for item in obj]
+    elif isinstance(obj, np.integer):
+        return int(obj)
+    elif isinstance(obj, np.floating):
+        return float(obj)
+    elif isinstance(obj, np.ndarray):
+        return obj.tolist()
+    elif hasattr(obj, '__float__'):
+        # Handle any other numeric types that can be converted to float
+        try:
+            return float(obj)
+        except (ValueError, TypeError):
+            return str(obj)
+    return obj
 
 
 # ============== Data Directory ==============
@@ -746,7 +772,7 @@ async def create_project(request: CreateProjectRequest, x_user_id: Optional[str]
     
     # Generate project ID
     project_id = str(uuid.uuid4())
-    now = datetime.utcnow().isoformat()
+    now = datetime.now(timezone.utc).isoformat()
     
     # Create project data
     project = ProjectData(
@@ -841,7 +867,7 @@ async def analyze_project(
     try:
         # Update status to analyzing
         project.status = "analyzing"
-        project.updated_at = datetime.utcnow().isoformat()
+        project.updated_at = datetime.now(timezone.utc).isoformat()
         projects[project_idx] = project
         save_user_projects(user_id, projects)
         
@@ -903,7 +929,7 @@ async def analyze_project(
         project.total_entities = len(entities)
         project.lsp_available = lsp_available
         project.stats = stats
-        project.updated_at = datetime.utcnow().isoformat()
+        project.updated_at = datetime.now(timezone.utc).isoformat()
         projects[project_idx] = project
         save_user_projects(user_id, projects)
         
@@ -916,7 +942,7 @@ async def analyze_project(
     except Exception as e:
         # Update status to error
         project.status = "error"
-        project.updated_at = datetime.utcnow().isoformat()
+        project.updated_at = datetime.now(timezone.utc).isoformat()
         projects[project_idx] = project
         save_user_projects(user_id, projects)
         
@@ -1045,6 +1071,225 @@ async def project_chat_stream(
             detail="Chat not available. Analyze the project first."
         )
     
+    message = request.message.strip()
+    
+    # Handle /refs command
+    if message.lower().startswith("/refs "):
+        entity_name = message[6:].strip()
+        if entity_name:
+            # Find matching entities
+            matches = find_entity_by_name(entity_name, state.entities)
+            
+            if not matches:
+                response_data = {
+                    "type": "refs",
+                    "entity_name": entity_name,
+                    "error": f"No entity found matching '{entity_name}'",
+                    "results": []
+                }
+            else:
+                # Query LSP on-demand for fresh data if available
+                config = get_config()
+                results = []
+                for entity in matches[:5]:
+                    info = {
+                        "name": entity.name,
+                        "entity_type": entity.entity_type,
+                        "file_path": entity.file_path,
+                        "line": entity.start_line,
+                        "column": entity.name_column,
+                    }
+                    
+                    # Try to get fresh LSP data if LSP is available
+                    if state.lsp_manager:
+                        try:
+                            refs_data = state.lsp_manager.get_symbol_references(
+                                entity.file_path,
+                                entity.start_line,
+                                column=entity.name_column
+                            )
+                            if entity.entity_type in config.callable_types:
+                                info["callers"] = [
+                                    {"name": c.name, "file_path": c.file_path, "line": c.line}
+                                    for c in refs_data.incoming_calls
+                                ]
+                                info["callees"] = [
+                                    {"name": c.name, "file_path": c.file_path, "line": c.line}
+                                    for c in refs_data.outgoing_calls
+                                ]
+                            else:
+                                info["references"] = [
+                                    {"file_path": r.file_path, "line": r.line}
+                                    for r in refs_data.references
+                                ]
+                        except Exception:
+                            # Fall back to pre-stored data
+                            if entity.entity_type in config.callable_types:
+                                info["callers"] = [
+                                    {"name": c.name, "file_path": c.file_path, "line": c.line}
+                                    for c in entity.incoming_calls
+                                ]
+                                info["callees"] = [
+                                    {"name": c.name, "file_path": c.file_path, "line": c.line}
+                                    for c in entity.outgoing_calls
+                                ]
+                            else:
+                                info["references"] = [
+                                    {"file_path": r.file_path, "line": r.line}
+                                    for r in entity.references
+                                ]
+                    else:
+                        # Use pre-stored data
+                        if entity.entity_type in config.callable_types:
+                            info["callers"] = [
+                                {"name": c.name, "file_path": c.file_path, "line": c.line}
+                                for c in entity.incoming_calls
+                            ]
+                            info["callees"] = [
+                                {"name": c.name, "file_path": c.file_path, "line": c.line}
+                                for c in entity.outgoing_calls
+                            ]
+                        else:
+                            info["references"] = [
+                                {"file_path": r.file_path, "line": r.line}
+                                for r in entity.references
+                            ]
+                    
+                    results.append(info)
+                
+                response_data = {
+                    "type": "refs",
+                    "entity_name": entity_name,
+                    "results": results
+                }
+            return StreamingResponse(
+                iter([json.dumps(make_json_serializable(response_data))]),
+                media_type="application/json",
+                headers={
+                    "Cache-Control": "no-cache",
+                    "Connection": "keep-alive",
+                    "X-Response-Type": "command",
+                }
+            )
+    
+    # Handle /calls command
+    if message.lower().startswith("/calls "):
+        function_name = message[7:].strip()
+        if function_name:
+            # Find matching functions
+            config = get_config()
+            matches = find_entity_by_name(function_name, state.entities)
+            matches = [e for e in matches if e.entity_type in config.callable_types]
+            
+            if not matches:
+                response_data = {
+                    "type": "calls",
+                    "function_name": function_name,
+                    "error": f"No function found matching '{function_name}'",
+                    "results": []
+                }
+            else:
+                results = []
+                for entity in matches[:3]:
+                    # Try to get fresh LSP data if available
+                    incoming_calls = []
+                    outgoing_calls = []
+                    
+                    if state.lsp_manager:
+                        try:
+                            refs_data = state.lsp_manager.get_symbol_references(
+                                entity.file_path,
+                                entity.start_line,
+                                column=entity.name_column
+                            )
+                            incoming_calls = [
+                                {"name": c.name, "kind": c.kind, "file_path": c.file_path, "line": c.line}
+                                for c in refs_data.incoming_calls
+                            ]
+                            outgoing_calls = [
+                                {"name": c.name, "kind": c.kind, "file_path": c.file_path, "line": c.line}
+                                for c in refs_data.outgoing_calls
+                            ]
+                        except Exception:
+                            # Fall back to pre-stored data
+                            incoming_calls = [
+                                {"name": c.name, "kind": c.kind, "file_path": c.file_path, "line": c.line}
+                                for c in entity.incoming_calls
+                            ]
+                            outgoing_calls = [
+                                {"name": c.name, "kind": c.kind, "file_path": c.file_path, "line": c.line}
+                                for c in entity.outgoing_calls
+                            ]
+                    else:
+                        # Use pre-stored data
+                        incoming_calls = [
+                            {"name": c.name, "kind": c.kind, "file_path": c.file_path, "line": c.line}
+                            for c in entity.incoming_calls
+                        ]
+                        outgoing_calls = [
+                            {"name": c.name, "kind": c.kind, "file_path": c.file_path, "line": c.line}
+                            for c in entity.outgoing_calls
+                        ]
+                    
+                    results.append({
+                        "name": entity.name,
+                        "entity_type": entity.entity_type,
+                        "file_path": entity.file_path,
+                        "line": entity.start_line,
+                        "incoming_calls": incoming_calls,
+                        "outgoing_calls": outgoing_calls,
+                    })
+                
+                response_data = {
+                    "type": "calls",
+                    "function_name": function_name,
+                    "results": results
+                }
+            return StreamingResponse(
+                iter([json.dumps(make_json_serializable(response_data))]),
+                media_type="application/json",
+                headers={
+                    "Cache-Control": "no-cache",
+                    "Connection": "keep-alive",
+                    "X-Response-Type": "command",
+                }
+            )
+    
+    # Handle /search command
+    if message.lower().startswith("/search "):
+        query = message[8:].strip()
+        if query:
+            results = state.chat_session.search(query)
+            search_results = []
+            for doc, score in results:
+                meta = doc.metadata
+                search_results.append({
+                    "name": meta.get("name", "Unknown"),
+                    "entity_type": meta.get("entity_type", "Unknown"),
+                    "file_path": meta.get("file_path", ""),
+                    "start_line": meta.get("start_line", 0),
+                    "end_line": meta.get("end_line", 0),
+                    "relevance_score": float(1 / (1 + score)),
+                    "num_references": meta.get("num_references", 0),
+                    "num_callers": meta.get("num_callers", 0),
+                    "num_callees": meta.get("num_callees", 0),
+                })
+            response_data = {
+                "type": "search",
+                "query": query,
+                "results": search_results
+            }
+            return StreamingResponse(
+                iter([json.dumps(make_json_serializable(response_data))]),
+                media_type="application/json",
+                headers={
+                    "Cache-Control": "no-cache",
+                    "Connection": "keep-alive",
+                    "X-Response-Type": "command",
+                }
+            )
+    
+    # Regular chat message - stream the response
     async def generate():
         """Generator for SSE streaming"""
         try:

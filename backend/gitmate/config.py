@@ -14,8 +14,11 @@ load_dotenv()
 @dataclass
 class Config:
     """Configuration settings for GitMate"""
-    # Embedding model (Ollama) - can override with GITMATE_EMBEDDING_MODEL
-    embedding_model: str = field(default_factory=lambda: os.getenv("GITMATE_EMBEDDING_MODEL", "nomic-embed-text"))
+    # Embedding model (Google Gemini) - can override with GITMATE_EMBEDDING_MODEL
+    embedding_model: str = field(default_factory=lambda: os.getenv("GITMATE_EMBEDDING_MODEL", "gemini-embedding-001"))
+    
+    # Gemini API key for embeddings (falls back to GOOGLE_API_KEY)
+    gemini_api_key: str = field(default_factory=lambda: os.getenv("GEMINI_API_KEY", os.getenv("GOOGLE_API_KEY", "")))
     
     # LLM model (Groq) - can override with GITMATE_LLM_MODEL
     llm_model: str = field(default_factory=lambda: os.getenv("GITMATE_LLM_MODEL", "llama-3.1-8b-instant"))

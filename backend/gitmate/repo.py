@@ -153,9 +153,12 @@ def open_files_in_lsp(
         repo_path: Path to the repository
         source_files: Files to open (defaults to all source files)
     """
+    import time
+    
     if source_files is None:
         source_files = get_source_files(repo_path)
 
+    opened_count = 0
     for file_path in source_files:
         try:
             ext = file_path.suffix.lower()
@@ -164,8 +167,15 @@ def open_files_in_lsp(
                     content = f.read()
                 rel_path = str(file_path.relative_to(repo_path))
                 lsp_manager.open_file(rel_path, content)
+                opened_count += 1
         except Exception:
             pass
+    
+    # Wait for LSP servers to fully index all files
+    # More files = more time needed
+    if opened_count > 0:
+        wait_time = min(5.0, 1.0 + (opened_count * 0.1))  # 1-5 seconds
+        time.sleep(wait_time)
 
 
 def enhance_entities_with_lsp(

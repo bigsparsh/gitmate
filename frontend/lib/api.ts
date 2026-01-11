@@ -84,8 +84,8 @@ export async function analyzeProject(
 ): Promise<ApiResponse<{ success: boolean; message: string; project: Project }>> {
   try {
     const params = new URLSearchParams();
-    if (options?.skipLsp) params.append("skip_lsp", "true");
-    if (options?.skipLlmAnalysis) params.append("skip_llm_analysis", "true");
+    if (options?.skipLsp) params.append("skip_lsp", "false");
+    if (options?.skipLlmAnalysis) params.append("skip_llm_analysis", "false");
     
     const response = await api.post(
       `/api/projects/${projectId}/analyze?${params.toString()}`,
@@ -266,12 +266,21 @@ export async function getFileContent(
 }
 
 // Chat APIs
+export interface CommandResponse {
+  type: "refs" | "calls" | "search";
+  entity_name?: string;
+  function_name?: string;
+  query?: string;
+  error?: string;
+  results: unknown[];
+}
+
 export async function sendChatMessage(
   projectId: string,
   message: string,
   userId?: string,
   onChunk?: (chunk: string) => void
-): Promise<ApiResponse<ChatMessage>> {
+): Promise<ApiResponse<ChatMessage> & { commandResponse?: CommandResponse }> {
   try {
     const headers: Record<string, string> = { "Content-Type": "application/json" };
     if (userId) headers["X-User-Id"] = userId;
@@ -289,6 +298,26 @@ export async function sendChatMessage(
       throw new Error("Failed to send message");
     }
 
+    // Check if this is a command response (JSON)
+    const contentType = response.headers.get("Content-Type");
+    const isCommand = response.headers.get("X-Response-Type") === "command" || 
+                      contentType?.includes("application/json");
+    
+    if (isCommand) {
+      const commandData = await response.json() as CommandResponse;
+      return {
+        success: true,
+        commandResponse: commandData,
+        data: {
+          id: crypto.randomUUID(),
+          role: "assistant",
+          content: "", // Command responses don't have regular content
+          timestamp: new Date(),
+        },
+      };
+    }
+
+    // Regular streaming response
     const reader = response.body?.getReader();
     const decoder = new TextDecoder();
     let fullContent = "";
