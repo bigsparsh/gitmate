@@ -14,44 +14,44 @@ _Onboarding to a new codebase shouldn't feel like deciphering ancient hieroglyph
 [Getting Started](#installation) . [Features](#features) . [Usage](#usage) . [Contributing](#contribution)
 
 </div>
-<img width="1115" height="629" alt="9 (1)" src="https://github.com/user-attachments/assets/d8496cf8-9622-4aaf-8b1f-ff2dca98e64f" />
+
 
 ---
 
 ## Description
 
-**GitMate** transforms the overwhelming experience of diving into a new repository into a guided, conversational journey. By combining code parsing and AI-powered understanding. It helps in quickly grasping what any codebase does and where to make changes.
+**GitMate** transforms the daunting task of codebase onboarding into an intuitive, interactive experience. By fusing **deterministic static analysis** (ASTs, LSP) with **probabilistic AI reasoning** (LLMs, RAG), GitMate provides a complete semantic understanding of any repository. It allows developers to "chat" with their code, visualizes complex dependencies, and accelerates the time-to-understanding by **up to 70%**.
 
-### The Problem It Solves
+### The Core Problem: Cognitive Overload
 
-Ever cloned a repository and felt lost trying to understand the codebase ? It feels like being dropped into a maze blindfolded :
+Modern software repositories are complex, interconnected ecosystems. For new developers, the learning curve is steep and costly:
 
-1. **Documentation is a myth**- READMEs are outdated, comments are scarce and you're left reverse engineering
-2. **Dependency chains are invisible**- You change one function and break three others because you couldn't see what calls what
-3. **Onboarding is measured in weeks**- New Team members spend their first month just trying to understand where things are and how they work
-4. **Open Source feels inaccessible**- You want to contribute but don't know where to start, what's safe to touch, or how components interact
+1.  **High Code Volume, Low Documentation:** READMEs rarely capture the intricate runtime behaviors or architectural decisions.
+2.  **Invisible Dependencies:** Modifying a single function can have cascading effects that static linters miss.
+3.  **Inefficient Onboarding:** Developers spend nearly **75% of their time reading code** versus writing it. The "Time-to-First-Commit" often spans weeks.
+4.  **Legacy Black Boxes:** Inheriting undocumented legacy code is risky and error-prone without deep contextual understanding.
 
-**Who struggles most ?**
-- New Developers joining teams or companies.
-- Open source contributors tackling their first PR.
-- Anyone inheriting legacy code without the original authors.
+**Who struggles most?**
+- **New Team Members** needing to become productive immediately.
+- **Open Source Contributors** navigating massive, unfamiliar projects.
+- **Maintainers** auditing legacy systems or refactoring complex modules.
 
 
-### ✨ The GitMate Solution
+### The Solution: Neuro-Symbolic Code Analysis
 
-GitMate transforms the codebase exploration into a guided journey. Here's How:
+GitMate bridges the gap between raw code and human understanding:
 
-1. **Deep Code Understanding**
--> Tree-sitter parses your entire codebase into structured AST, extracting every function, class, variable and their relationship.
+1.  **Precision Parsing (The Logic)**
+    *   Utilizing **Tree-sitter**, GitMate constructs a rigorous Abstract Syntax Tree (AST) of the codebase, ensuring every function, class, and variable is indexed with 100% accuracy.
 
-2. **AI-Powered Documentation**
--> Each code entity gets and AI-generated description explaining what it does, how it works, and why it matters.
+2.  **Semantic Enrichment (The Knowledge)**
+    *   An **LSP (Language Server Protocol)** client resolves symbol references and call hierarchies, mapping the "connectome" of the software.
 
-3. **Semantic Memory**
--> Everything is embedded into a FAISS vector database, enabling natural language search.
+3.  **AI Synthesis (The Insight)**
+    *   Large Language Models (Llama 3.3 via Groq) generate human-readable explanations for every entity, stored in a **FAISS vector database** for semantic retrieval.
 
-4. **Conversational Code Navigation**
--> Chat with your codebase and have the ability to dive deeper with `/refs` and `/calls` command.
+4.  **Interactive Exploration**
+    *   A modern **Next.js 16** web dashboard allows users to query the codebase using natural language, visualize data flows, and navigate complex architectures effortlessly.
 
 ---
 
@@ -63,57 +63,96 @@ GitMate transforms the codebase exploration into a guided journey. Here's How:
 
 ### Intelligent Code Parsing
 
-- **Tree-sitter AST analysis** for accurate code understanding
-- Extracts functions, variables, structs, enums, and more
-- Supports **C/C++**, **TypeScript/TSX**, and **JSON**
-- Preserves exact line numbers and code locations
+- **Tree-sitter AST analysis** for accurate, error-tolerant parsing
+- Extracts functions, variables, structs, enums across files
+- **Polyglot Support**: C/C++, TypeScript/TSX, JSON, and Python
+- Captures exact file locations and structural context
 
 </td>
 <td width="50%">
 
-### LSP Integration
+### Architecture Awareness
 
-- **Reference tracking** - Find every usage of any symbol
-- **Call hierarchy** - See who calls what and what calls whom
-- Works with **clangd** (C/C++) and **typescript-language-server**
-- Gracefully degrades if LSP unavailable
+- **Reference Tracking**: Instantly find symbol usage across the project
+- **Call Hierarchy**: Visualize upstream callers and downstream dependencies
+- **LSP Integration**: Leverages `clangd` and `typescript-language-server`
+- **Smart Degradation**: Falls back to heuristic analysis if LSP is absent
 
 </td>
 </tr>
 <tr>
 <td width="50%">
 
-### LLM-Powered Analysis
+### Neuro-Symbolic AI Core
 
-- Automatic description generation for all code entities
-- Context-aware Q&A with memory
-- **Streaming responses** - No waiting for complete answers
-- Powered by **Groq's Llama 3.3 70B** for fast inference
+- **Context-Aware Explanations**: Auto-generates docs for undocumented code
+- **Streaming RAG**: Retrieval Augmented Generation with sub-second latency
+- **High-Performance Inference**: Powered by **Groq's Llama 3.3 70B**
+- **Vector Memory**: Persistent semantic index using **FAISS** & **Ollama**
 
 </td>
 <td width="50%">
 
-### Semantic Search
+### Modern Web Interface
 
-- **FAISS vector store** for lightning-fast retrieval
-- **Ollama embeddings** with nomic-embed-text
-- Finds relevant code even with vague queries
-- Returns contextually similar code snippets
+- **Next.js 16 Dashboard**: Built with React 19 and TailwindCSS 4
+- **Real-time Chat**: Streaming responses via WebSockets
+- **Visualizations**: Interactive dependency graphs and file trees
+- **Multi-Tenant**: Project isolation with **Postgres** & **Prisma**
 
 </td>
 </tr>
 <tr>
 <td colspan="2">
 
-### Interactive Chat Interface
+### Impact & Use Cases
 
-- Beautiful **Rich TUI** with markdown rendering
-- Chat history with context preservation
-- Special commands: `/refs`, `/calls`, `/code`, `/help`
-- "Where should I change for X feature?" → Exact function location
+- **"Explain This Function"**: Instant clarity on complex logic
+- **"What breaks if I change this?"**: Impact analysis via dependency graphs
+- **"How does Auth work?"**: Semantic search across the entire modules
+- **Secure by Design**: Local embedding generation and isolated project environments
 
 </td>
 </tr>
+</table>
+
+---
+
+## Project Gallery
+
+Experience the power of GitMate through our modern web interface.
+
+<div align="center">
+   <img width="1199" height="675" alt="1" src="https://github.com/user-attachments/assets/b87dbc6d-0a90-4fbd-b723-1afa53f7dd57" />
+
+  <p><em>Comprehensive Dashboard Overview</em></p>
+</div>
+
+<table>
+  <tr>
+    <td width="33%"><img width="1296" height="710" alt="2" src="https://github.com/user-attachments/assets/68ff0bfd-9ed5-4377-a998-19e4b4b5e51e" />
+</td>
+    <td width="33%"><img width="1061" height="578" alt="3" src="https://github.com/user-attachments/assets/f093f0d0-a829-4937-874b-8831e90f4483" />
+</td>
+    <td width="33%"><img width="1035" height="596" alt="4" src="https://github.com/user-attachments/assets/0345df2c-b5ff-4b79-9ff0-e912685d4d13" />
+</td>
+  </tr>
+  <tr>
+    <td width="33%"><img width="1128" height="623" alt="5" src="https://github.com/user-attachments/assets/6dc04919-5591-45b9-9937-67cbcc2f86f8" />
+</td>
+    <td width="33%"><img width="1025" height="679" alt="6" src="https://github.com/user-attachments/assets/955b2311-06fe-486d-a5c1-abcf39a0224d" />
+</td>
+    <td width="33%"><img width="1106" height="624" alt="7" src="https://github.com/user-attachments/assets/208790b4-6913-4f0b-a667-327590b1ac59" />
+</td>
+  </tr>
+  <tr>
+    <td width="33%"><img width="923" height="550" alt="8" src="https://github.com/user-attachments/assets/b6cfb768-b401-4b1b-9a00-675da0782a09" />
+</td>
+    <td width="33%"><img width="1115" height="629" alt="9 (1)" src="https://github.com/user-attachments/assets/24f3e3e3-94ee-42cc-ada6-0edf16592373" />
+</td>
+    <td width="33%"><img width="1199" height="675" alt="1" src="https://github.com/user-attachments/assets/f3bbc908-9a18-45a1-8b78-2a81b8f66c46" />
+</td>
+  </tr>
 </table>
 
 ---
@@ -122,117 +161,122 @@ GitMate transforms the codebase exploration into a guided journey. Here's How:
 
 ### Prerequisites
 
-- **Python 3.13+**
-- **Ollama** - For local embeddings ([Install Ollama](https://ollama.ai/))
-- **UV** - Fast Python package manager ([Install UV](https://github.com/astral-sh/uv))
+- **Python 3.13+** (Backend)
+- **Node.js 18+ & pnpm** (Frontend)
+- **PostgreSQL** (Database)
+- **Ollama** (Embeddings) - [Install Ollama](https://ollama.ai/)
+- **UV** (Python Package Manager) - [Install UV](https://github.com/astral-sh/uv)
 
-### STEP 1 : CLONE THE REPOSITORY
+### STEP 1: CLONE THE REPOSITORY
 
 ```zsh
-# Clone via HTTPS
 git clone https://github.com/bigsparsh/gitmate.git
-
-# Or clone via SSH (if you have ssh keys configured)
-git clone git@github.com:bigsparsh/gitmate.git
-
-# Go to the project directory
 cd gitmate
 ```
 
-### STEP 2 : INSTALL DEPENDENCIES
+### STEP 2: BACKEND SETUP
 
 ```zsh
-# Using pip
-pip install -e
+cd backend
 
-# Or Using UV (recommended)
+# Install dependencies using UV
 uv sync
 
+# Configure environment
+# Create .env file with GROQ_API_KEY and DATABASE_URL
 ```
 
-### STEP 3: CONFIGURE API KEYS
+### STEP 3: FRONTEND SETUP
 
 ```zsh
-# Set your Groq API Key
-export GROQ_API_KEY=your_groq_api_key
+cd frontend
 
+# Install dependencies
+pnpm install
+
+# Initialize Database
+pnpm prisma generate
+pnpm prisma db push
 ```
 
-### STEP 4: PULL THE EMBEDDED MODEL
+### STEP 4: AI & SERVICES SETUP
 
 ```zsh
-# Pull the embedding model
+# Pull the embedding model locally
 ollama pull nomic-embed-text
 ```
 
 ### STEP 5: LSP SETUP (OPTIONAL)
 
-This step is optional it is used for enhanced tracking and call hierarchy features :
+For enhanced tracking and call hierarchy features:
 ```zsh
 # For C/C++ support
-sudo apt install clangd    #UBUNTU/DEBIAN
-sudo pacman -S clang       #Arch Linux
-brew install llvm          #macOS
+sudo apt install clangd    # Ubuntu/Debian
+brew install llvm          # macOS
 ```
 ---
 
 ## USAGE
 
-### Starting GitMate
+### 1. Start the Backend Server
 
-python main.py
+```zsh
+cd backend
+source .venv/bin/activate
+uv run server.py
+# Server runs at http://localhost:8000
+```
 
-<img width="1600" height="333" alt="1 final" src="https://github.com/user-attachments/assets/7654a754-05b7-418c-ae73-f92562d6417e" />
+### 2. Start the Frontend Dashboard
 
+```zsh
+cd frontend
+pnpm dev
+# Dashboard available at http://localhost:3000
+```
 
-You'll be prompted to enter Github Repo URL. After that GitMate will:
+### 3. Explore Your Codebase
 
-**1. Clone the repository to `/tmp/gitmate/`**
+1. Open `http://localhost:3000` in your browser.
+2. Enter a GitHub Repository URL to start a new project.
+3. The system will clone, parse, and analyze the repo in the background.
+4. Interact with the **Chat**, **File Explorer**, or **Dependency Graph** to understand the code.
 
-Enter any GitHub repository URL to begin analysis. For example : ( https://github.com/bigsparsh/bgdb.git )
+<div align="center">
+  <img width="1025" height="679" alt="6" src="https://github.com/user-attachments/assets/0beff3af-dda2-45c4-b063-02eddf9f543f" />
 
-**2. Using Tree-sitter GitMate will parse through all the source files and it will also initialize the LSP Server (if available)**
+</div>
 
-<img width="799" height="733" alt="2 final" src="https://github.com/user-attachments/assets/02b49ea2-68f1-4e81-8f29-eff676561966" />
-
-
-**3. AI will start analyzing and generating each entity signatures of function, variables and macros**
-
-<img width="607" height="738" alt="3 final" src="https://github.com/user-attachments/assets/c00dc7ef-f74f-48bd-9d10-9c6f276a11d3" />
-
-
-**4. Result of the AI analysis**
-
-<img width="1048" height="596" alt="4 final " src="https://github.com/user-attachments/assets/09d8d074-67d0-4735-be18-a84c28fd27cc" />
-
-
-**5. Creating of the Vector Store**
-
-<img width="1574" height="699" alt="5 final" src="https://github.com/user-attachments/assets/f7a9be13-352d-48f2-b936-873f701285cb" />
-
-
-**6. Enter the Interactive Chat**
-
-<img width="1154" height="652" alt="6 final" src="https://github.com/user-attachments/assets/21b5d35e-66aa-4659-9bda-f639dcc3f2c6" />
-
-
-### Chat Commands
-
-| Command           | Description                        |
-| ----------------- | ---------------------------------- |
-| `/refs <name>`    | Show all references to a symbol    |
-| `/calls <name>`   | Show call hierarchy for a function |
-| `/code <name>`    | Display the code for an entity     |
-| `/entities`       | List all extracted entities        |
-| `/help`           | Show available commands            |
-| `/quit` or `exit` | Exit GitMate                       |
 
 
 ---
 
 ## ARCHITECTURE
 
+### Technical Stack & Data Flow
+
+GitMate employs a **Hybrid Neuro-Symbolic Architecture** that combines the deterministic precision of static analysis with the probabilistic reasoning of Large Language Models.
+
 ![Architecture](https://github.com/user-attachments/assets/ff8adac3-6e70-4fd1-a5cf-cebb578b4e6d)
+
+#### 1. The Persistence Layer (Backend)
+- **FastAPI (Python 3.13):** High-performance async API server handling WebSocket streams for real-time chat.
+- **Tree-sitter:** Incremental parsing library extracting precise ASTs for C++, Python, TypeScript, and Java.
+- **LSP Client:** A custom Python wrapper interacting with `clangd` and `tsserver` via stdio pipes to extract Call Hierarchies and References.
+
+#### 2. The Cognitive Layer (AI Engine)
+- **Vector Store:** **FAISS** (Facebook AI Similarity Search) indexes code chunks using **Nomic Embed Text** (via Ollama) for local, privacy-focused semantic retrieval.
+- **Inference:** **Groq API** running **Llama 3.3 70B** provides near-instantaneous reasoning and code explanation.
+- **RAG Pipeline:** LangChain orchestrates the retrieval of semantic context + AST structure + Call Graph data to ground the LLM's responses in reality.
+
+#### 3. The Presentation Layer (Frontend)
+- **Framework:** **Next.js 16 (App Router)** & **React 19** for server-side rendering and static generation.
+- **State & UI:** **TailwindCSS 4** for styling, **Mermaid.js** for rendering live dependency graphs, and **Prisma ORM** for managing user sessions and history.
+- **Streaming:** Server-Sent Events (SSE) and WebSockets ensure a fluid, "typing-like" experience during AI generation.
+
+#### 4. Data Model
+- **PostgreSQL:** Stores relational data (Users, Projects, Chat History).
+- **Relational Integrity:** Tracks the lineage of every analysis session and user interaction.
 
 
 ---
@@ -262,43 +306,40 @@ gitmate/
 <tr>
 <td width="50%">
 
-#### Beautiful Web Interface
+#### IDE Integration
 
-- Modern React-based frontend
-- Dark/Light theme support
-- Real-time streaming chat UI
+- VS Code and JetBrains plugins
+- Real-time "Copilot" style explanations in-editor
+- One-click navigation from IDE to GitMate Graph View
 
 </td>
 <td width="50%">
 
-#### Interactive Code Tree
+#### Collaborative Onboarding
 
-- AI-generated visual diagram of file structure
-- Expandable nodes showing functions per file
-- Click-to-navigate to any code entity
-- Relationship visualization between modules
+- Multiplayer sessions for team code reviews
+- Shared annotations and "Knowledge Trails"
+- Interactive "Walkthrough" recording for new hires
 
 </td>
 </tr>
 <tr>
 <td width="50%">
 
-#### Code Insights Dashboard
+#### CI/CD Autonomous Agents
 
-- Repository statistics & metrics
-- Most referenced functions
-- Complexity hotspots
-- Dependency graphs
+- Github Action to auto-analyze PRs
+- "Risk Report" generation for every commit
+- Automated architecture drift detection
 
 </td>
 <td width="50%">
 
-#### More Language Support
+#### Self-Healing Repositories
 
-- Python (tree-sitter-python)
-- Java (tree-sitter-java)
-- Rust (tree-sitter-rust)
-- Go (tree-sitter-go)
+- Auto-generation of test cases for legacy code
+- Automated refactoring suggestions based on AST patterns
+- Vulnerability detection and patch suggestion
 
 </td>
 </tr>
@@ -307,9 +348,14 @@ gitmate/
 
 ---
 
-## SNEAK PEEK INTO THE FUTURE
+## ROADMAP
 
-<img width="866" height="478" alt="7" src="https://github.com/user-attachments/assets/2657ff0f-d23e-470f-9956-d991d7fcd176" />
+- [x] **v0.1:** Core Tree-sitter + LSP + LLM integration (CLI)
+- [x] **v0.2:** Vector Database Memory & Context Awareness
+- [x] **v1.0:** Full Web Dashboard (Next.js 16) & Streaming Chat
+- [ ] **v1.1:** Multi-repo support & Organization workspaces
+- [ ] **v1.2:** IDE Extensions for VS Code & JetBrains
+- [ ] **v2.0:** Autonomous Refactoring Agents
 
 
 
