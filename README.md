@@ -286,15 +286,39 @@ GitMate employs a **Hybrid Neuro-Symbolic Architecture** that combines the deter
 ```
 
 gitmate/
+├── frontend/
+│   ├── app/
+│   ├── components/
+│   ├── hooks/
+│   ├── lib/
+│   ├── prisma/
+│   ├── public/
+│   ├── types/
+│   ├── .gitignore
+│   ├── README.md
+│   ├── components.json
+│   ├── eslint.config.mjs
+│   ├── instructions.md
+│   ├── middleware.ts
+│   ├── next.config.ts
+│   ├── package.json
+│   ├── pnpm-lock.yaml
+│   ├── pnpm-workspace.yaml
+│   ├── postcss.config.mjs
+│   ├── prisma.config.ts
+│   ├── tsconfig.json
+│
 ├── backend/
-│   ├── assets/
-│   ├── instructions.md
-│   ├── lsp_client.py
-│   ├── main.py
-│   ├── pyproject.toml
-│   ├── tree-sitter-docs.md
-│   └── uv.lock
-└── README.md
+│   ├── assets/
+│   ├── instructions.md
+│   ├── lsp_client.py
+│   ├── main.py
+│   ├── pyproject.toml
+│   ├── tree-sitter-docs.md
+│   └── uv.lock
+│
+├── README.md
+└── .gitignore
 
 ```
 
